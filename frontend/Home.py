@@ -1,6 +1,8 @@
 #run >> python -m streamlit run Home.py
 import streamlit as st
 import base64
+from model import get_platform_data
+
 
 st.set_page_config(page_title="ABSA Food Dashboard", layout="wide", page_icon="🍽️")
 
@@ -32,15 +34,42 @@ st.markdown("""
             transform: scale(1.03);
         }
         .icon-img {
-            height: 80px;
-            width: 80px;
+            height: 100px;
+            width: 100px;
             object-fit: contain;
             margin-bottom: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 12px;
+            box-sizing: border-box;
         }
         a.card-link {
             text-decoration: none;
             color: inherit;
         }
+        .rank-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 500px;
+            margin: auto;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .rank-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 1rem;;
+            background-color:  #f6f9ff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+        .rank-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+            
     </style>
 """, unsafe_allow_html=True)
 
@@ -83,6 +112,20 @@ st.markdown(f"""
 
 </div>
 """, unsafe_allow_html=True)
+
+# Calculate and display dynamic ABSA ranking
+def get_average_sentiment(platform):
+    df = get_platform_data(platform)
+    if df.empty or "review_sentiment" not in df.columns:
+        return 0
+    score_map = {"positive": 5, "neutral": 3, "negative": 1}
+    scores = df["review_sentiment"].map(score_map).dropna()
+    return round(scores.mean(), 2) if not scores.empty else 0
+
+platforms = ["shopeefood", "grabfood", "foodpanda"]
+emoji_map = {"shopeefood": "🛵", "grabfood": "🍔", "foodpanda": "🐼"}
+platform_scores = [(p.title(), get_average_sentiment(p), emoji_map[p]) for p in platforms]
+platform_scores.sort(key=lambda x: x[1], reverse=True)
 
 # Ratings Section
 st.markdown("<br><br>", unsafe_allow_html=True)
