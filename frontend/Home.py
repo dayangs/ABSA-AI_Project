@@ -17,7 +17,7 @@ import pandas as pd
 # Load dataset (if not already loaded in Home.py)
 @st.cache_data
 def load_absa_results():
-    df = pd.read_excel("absa_ModelResults.xlsx")
+    df = pd.read_excel("../absa_ModelResults.xlsx")
     df.columns = [c.strip().lower() for c in df.columns]
     return df
 

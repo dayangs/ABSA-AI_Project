@@ -2,7 +2,7 @@ import pandas as pd
 
 def load_absa_results():
     try:
-        df = pd.read_excel("absa_ModelResults.xlsx")
+        df = pd.read_excel("../absa_ModelResults.xlsx")
         return df
     except FileNotFoundError:
         return pd.DataFrame()
