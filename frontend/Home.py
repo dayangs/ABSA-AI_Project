@@ -1,14 +1,27 @@
 #run >> python -m streamlit run Home.py
 import streamlit as st
 import base64
+import matplotlib.pyplot as plt
+import pandas as pd
 from model import get_platform_data
-
+from wordcloud import WordCloud
 
 st.set_page_config(page_title="ABSA Food Dashboard", layout="wide", page_icon="🍽️")
 
 st.markdown("<h1 style='text-align: center;'>🍽️ ABSA for Online Food Delivery Reviews</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center; color: gray;'>Welcome to the Malaysian Sentiment Intelligence Dashboard</h3>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
+
+import pandas as pd
+
+# Load dataset (if not already loaded in Home.py)
+@st.cache_data
+def load_absa_results():
+    df = pd.read_excel("absa_ModelResults.xlsx")
+    df.columns = [c.strip().lower() for c in df.columns]
+    return df
+
+df = load_absa_results()
 
 # CSS for card layout and fixed icon sizing
 st.markdown("""
@@ -149,6 +162,46 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+from wordcloud import STOPWORDS
+
+# --- Word Cloud Section ---
+st.markdown("<br><hr>", unsafe_allow_html=True)
+st.markdown("## ☁️ Word Clouds by Platform")
+st.markdown("Here's what users talk about most on each food delivery app:")
+
+platforms = ["foodpanda", "grabfood", "shopeefood"]
+pretty_names = {"foodpanda": "FoodPanda", "grabfood": "GrabFood", "shopeefood": "ShopeeFood"}
+cols = st.columns(3)
+
+custom_stopwords = STOPWORDS.union({
+    "grab", "foodpanda", "shopeefood", "food", "order", "use", "rm", "delivery", "app", "get", "one"
+})
+
+for i, ofd in enumerate(platforms):
+    with cols[i]:
+        st.markdown(f"#### {pretty_names[ofd]}")
+        filtered = df[df["related_ofd"].str.lower() == ofd]
+
+        if not filtered.empty:
+            text = " ".join(filtered["sentence"].dropna())
+            if text.strip():
+                wc = WordCloud(
+                    width=400, height=250,
+                    background_color="white",
+                    colormap="tab10",
+                    stopwords=custom_stopwords
+                ).generate(text)
+
+                fig, ax = plt.subplots(figsize=(4, 2.5))
+                ax.imshow(wc, interpolation='bilinear')
+                ax.axis("off")
+                st.pyplot(fig)
+                
+            else:
+                st.info("No review text found.")
+        else:
+            st.warning("No data for this platform.")
+            
 # Footer
 st.markdown("<br><hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Built with 💙 by Russell Rangers</p>", unsafe_allow_html=True)
