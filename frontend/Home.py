@@ -202,6 +202,14 @@ for i, ofd in enumerate(platforms):
         else:
             st.warning("No data for this platform.")
             
-# Footer
+# Footer with disclaimer
 st.markdown("<br><hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Built with 💙 by Russell Rangers</p>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='text-align: center; font-size: 13px; color: gray;'>
+        ⚠️ This dashboard is for academic use only. Sentiment analysis is auto-generated and may not reflect actual customer intentions. Use with care.<br><br>
+        Built with 💙 by Russell Rangers
+    </div>
+    """,
+    unsafe_allow_html=True
+)
