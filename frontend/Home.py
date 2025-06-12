@@ -33,7 +33,7 @@ st.markdown("""
             flex-wrap: wrap;
         }
         .card {
-            background-color: #ffffff;
+            background-color: #e8f5ff;
             border-radius: 15px;
             padding: 1.5rem;
             width: 260px;
@@ -41,6 +41,7 @@ st.markdown("""
             box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
             transition: 0.3s ease;
             cursor: pointer;
+            color: #0d1117;
         }
         .card:hover {
             background-color: #f1f5ff;
@@ -202,6 +203,14 @@ for i, ofd in enumerate(platforms):
         else:
             st.warning("No data for this platform.")
             
-# Footer
+# Footer Section      
 st.markdown("<br><hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Built with 💙 by Russell Rangers</p>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='text-align: center; font-size: 13px; color: gray;'>
+        ⚠ This dashboard is for academic use only. Sentiment analysis is auto-generated and may not reflect actual customer intentions. Use with care.<br><br>
+        Built with 💙 by Russell Rangers
+    </div>
+    """,
+    unsafe_allow_html=True
+)

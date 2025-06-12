@@ -32,7 +32,13 @@ else:
         with col2:
             st.subheader("📊 Sentiment Overview")
 
-            sentiment_counts = df[selected_aspect].value_counts()
+            sentiment_counts = (
+                df[selected_aspect]
+                .astype(str)
+                .str.strip()
+                .str.lower()
+                .value_counts()
+            )
             pos = sentiment_counts.get("positive", 0)
             neu = sentiment_counts.get("neutral", 0)
             neg = sentiment_counts.get("negative", 0)
@@ -48,5 +54,14 @@ else:
             ax.set_title(f"Overall Sentiment ({selected_aspect.replace('_', ' ').title()})")
             st.pyplot(fig)
 
-    st.markdown("<hr style='border:1px solid #ccc'/>", unsafe_allow_html=True)
-    st.caption("Built with 🧡 by Russell Rangers")
+# Footer Section      
+st.markdown("<br><hr>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='text-align: center; font-size: 13px; color: gray;'>
+        ⚠ This dashboard is for academic use only. Sentiment analysis is auto-generated and may not reflect actual customer intentions. Use with care.<br><br>
+        Built with 💙 by Russell Rangers
+    </div>
+    """,
+    unsafe_allow_html=True
+)

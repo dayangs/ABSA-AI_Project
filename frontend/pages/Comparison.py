@@ -42,5 +42,14 @@ else:
     ax.legend(title="Sentiment")
     st.pyplot(fig)
 
-st.markdown("""<hr style='border:1px solid #ccc'/>""", unsafe_allow_html=True)
-st.caption("Built with 🔍 by Russell Rangers")
+# Footer Section      
+st.markdown("<br><hr>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='text-align: center; font-size: 13px; color: gray;'>
+        ⚠ This dashboard is for academic use only. Sentiment analysis is auto-generated and may not reflect actual customer intentions. Use with care.<br><br>
+        Built with 💙 by Russell Rangers
+    </div>
+    """,
+    unsafe_allow_html=True
+)
