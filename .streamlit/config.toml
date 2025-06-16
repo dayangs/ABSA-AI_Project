@@ -1,0 +1,6 @@
+[theme]
+primaryColor = "#90caf9"               # Light blue accent
+backgroundColor = "#0e1117"            # Dark gray/black background
+secondaryBackgroundColor = "#1c1f26"   # Card/sidebar background
+textColor = "#f5f6fa"                  # Light text
+font = "sans serif"
