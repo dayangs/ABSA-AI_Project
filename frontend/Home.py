@@ -17,7 +17,7 @@ import pandas as pd
 # Load dataset (if not already loaded in Home.py)
 @st.cache_data
 def load_absa_results():
-    df = pd.read_excel("frontend/absa_ModelResults.xlsx")
+    df = pd.read_excel("absa_ModelResults.xlsx")
     df.columns = [c.strip().lower() for c in df.columns]
     return df
 
@@ -92,9 +92,9 @@ def load_img_as_base64(path):
     with open(path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
 
-grab_logo = load_img_as_base64("frontend/images/grab.png")
-shopee_logo = load_img_as_base64("frontend/images/shopee.png")
-panda_logo = load_img_as_base64("frontend/images/panda.png")
+grab_logo = load_img_as_base64("images/grab.png")
+shopee_logo = load_img_as_base64("images/shopee.png")
+panda_logo = load_img_as_base64("images/panda.png")
 
 # Display cards with logos
 st.markdown(f"""
@@ -128,40 +128,39 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Calculate and display dynamic ABSA ranking
-def get_average_sentiment(platform):
-    df = get_platform_data(platform)
-    if df.empty or "review_sentiment" not in df.columns:
-        return 0
-    score_map = {"positive": 5, "neutral": 3, "negative": 1}
-    scores = df["review_sentiment"].map(score_map).dropna()
-    return round(scores.mean(), 2) if not scores.empty else 0
+def get_average_sentiment_from_excel(platform):
+    df = load_absa_results()
+    df.columns = [col.strip().lower() for col in df.columns]
+    df['related_ofd'] = df['related_ofd'].astype(str).str.strip().str.lower()
+    
+    platform_data = df[df['related_ofd'] == platform.lower()]
+    
+    if 'review_sentiment' in platform_data.columns:
+        score_map = {"positive": 5, "neutral": 3, "negative": 1}
+        scores = platform_data["review_sentiment"].str.lower().map(score_map)
+        return round(scores.mean(), 2) if not scores.empty else 0
+    return 0
 
 platforms = ["shopeefood", "grabfood", "foodpanda"]
 emoji_map = {"shopeefood": "🛵", "grabfood": "🍔", "foodpanda": "🐼"}
-platform_scores = [(p.title(), get_average_sentiment(p), emoji_map[p]) for p in platforms]
+platform_scores = [(p.title(), get_average_sentiment_from_excel(p), emoji_map[p]) for p in platforms]
 platform_scores.sort(key=lambda x: x[1], reverse=True)
+
 
 # Ratings Section
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("## 🏆 Top Rated Platforms 2025")
 st.markdown("Users have spoken! These are the best-rated food delivery platforms based on ABSA results.")
 
-st.markdown("""
-<div class="rank-section">
-    <div class="rank-row">
-        <div class="rank-name">1 🛵 <strong>ShopeeFood</strong></div>
-        <div style="color: green;"><strong>4.7 ⭐</strong></div>
-    </div>
-    <div class="rank-row">
-        <div class="rank-name">2 🍔 <strong>GrabFood</strong></div>
-        <div style="color: green;"><strong>4.5 ⭐</strong></div>
-    </div>
-    <div class="rank-row">
-        <div class="rank-name">3 🐼 <strong>PandaFood</strong></div>
-        <div style="color: green;"><strong>4.4 ⭐</strong></div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+st.markdown("<div class='rank-section'>", unsafe_allow_html=True)
+for i, (name, score, emoji) in enumerate(platform_scores, 1):
+    st.markdown(f"""
+        <div class="rank-row">
+            <div class="rank-name">{i} {emoji} <strong>{name}</strong></div>
+            <div style="color: green;"><strong>{score} ⭐</strong></div>
+        </div>
+    """, unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 from wordcloud import STOPWORDS
 
