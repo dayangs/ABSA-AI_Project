@@ -3,6 +3,7 @@ import streamlit as st
 import base64
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
 from model import get_platform_data
 from wordcloud import WordCloud
 
@@ -15,9 +16,9 @@ st.markdown("<br>", unsafe_allow_html=True)
 import pandas as pd
 
 # Load dataset (if not already loaded in Home.py)
-@st.cache_data
 def load_absa_results():
-    df = pd.read_excel("absa_ModelResults.xlsx")
+    file_path = os.path.join(os.path.dirname(__file__), "absa_ModelResults.xlsx")
+    df = pd.read_excel(file_path)
     df.columns = [c.strip().lower() for c in df.columns]
     return df
 
